@@ -14,6 +14,8 @@ public class Cenario extends Container implements KeyListener {
 	private int bola_y = 10;
 	private int bola_vel_x = 1;
 	private int bola_vel_y = 1;
+	private int angulo = 0;
+	private int angulo_vel = 1;
 
 	private int barra_y = 500;
 	
@@ -32,9 +34,19 @@ public class Cenario extends Container implements KeyListener {
 		g.drawRect(5, 5, 790, 590);
 		g.fillRect(barra_x, barra_y , 50, 10);
 		g.fillOval(bola_x, bola_y, 20, 20);
+		g.fillArc(200, 200, 50, 50, angulo, 360 - angulo);
+		
+		angulo += angulo_vel;
+		if (angulo > 90) { 
+			angulo_vel = -1;
+		}
+		if (angulo < 0) { 
+			angulo_vel = 1;
+		}
 	}
 	
 	public void calcularRegras() { 
+		
 		barra_x = barra_x + barra_vel_x;
 		bola_x = bola_x + bola_vel_x;
 		bola_y = bola_y + bola_vel_y;
