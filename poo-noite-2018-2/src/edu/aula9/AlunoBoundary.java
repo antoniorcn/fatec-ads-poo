@@ -1,19 +1,20 @@
 package edu.aula9;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 public class AlunoBoundary implements ActionListener {
@@ -29,32 +30,36 @@ public class AlunoBoundary implements ActionListener {
 	private JTextField txtAltura = new JTextField(10);
 	private JButton btnAdicionar = new JButton("Adicionar");
 	private JButton btnPesquisar = new JButton("Pesquisar");
-	
-	private List<Aluno> alunos = new ArrayList<>();
-	
+	private AlunoControl control = new AlunoControl();
+	private JTable table = new JTable(control);
+		
 	public AlunoBoundary() { 
 		janela = new JFrame("Registro de Alunos");
-		JPanel painel = new JPanel(new GridLayout(7, 2));
+		JPanel panCampos = new JPanel(new GridLayout(7, 2));
+		JPanel panPrincipal = new JPanel( new BorderLayout());
+		JScrollPane panTable = new JScrollPane();
 		
-		painel.add(new JLabel("Nome do Aluno:"));
-		painel.add(txtNome);
-		painel.add(new JLabel("RA:"));
-		painel.add(txtRa);
-		painel.add(new JLabel("Data de Nascimento:"));
-		painel.add(txtNascimento);
-		painel.add(new JLabel("Email:"));
-		painel.add(txtEmail);
-		painel.add(new JLabel("Nome do Curso:"));
-		painel.add(cmbCurso);
-		painel.add(new JLabel("Altura:"));
-		painel.add(txtAltura);		
-		painel.add(btnAdicionar);
-		painel.add(btnPesquisar);
+		panCampos.add(new JLabel("Nome do Aluno:"));
+		panCampos.add(txtNome);
+		panCampos.add(new JLabel("RA:"));
+		panCampos.add(txtRa);
+		panCampos.add(new JLabel("Data de Nascimento:"));
+		panCampos.add(txtNascimento);
+		panCampos.add(new JLabel("Email:"));
+		panCampos.add(txtEmail);
+		panCampos.add(new JLabel("Nome do Curso:"));
+		panCampos.add(cmbCurso);
+		panCampos.add(new JLabel("Altura:"));
+		panCampos.add(txtAltura);		
+		panCampos.add(btnAdicionar);
+		panCampos.add(btnPesquisar);
 		
 		btnAdicionar.addActionListener(this);
 		btnPesquisar.addActionListener(this);
-				
-		janela.setContentPane(painel);
+		panTable.getViewport().add(table);
+		panPrincipal.add(panCampos, BorderLayout.NORTH);
+		panPrincipal.add(panTable, BorderLayout.CENTER);
+		janela.setContentPane(panPrincipal);
 		
 		janela.setSize(600, 300);
 		janela.setVisible(true);
@@ -82,21 +87,18 @@ public class AlunoBoundary implements ActionListener {
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
-			alunos.add(a);
-			System.out.println("Aluno cadastrado, a lista tem " + 
-									alunos.size() + " alunos ");
+			control.adicionar(a);
+			table.invalidate();
+			table.revalidate();
+			table.repaint();
 		} else {
-			System.out.println("Procurando aluno");
-			for (Aluno a : alunos) { 
-				if (a.getNome().contains(txtNome.getText())) { 
-					txtNome.setText(a.getNome());
-					txtRa.setText(a.getRa());
-					txtEmail.setText(a.getEmail());
-					cmbCurso.setSelectedItem(a.getCurso());
-				}
+			Aluno a = control.pesquisarPorNome(txtNome.getText());
+			if (a != null) { 
+				txtNome.setText(a.getNome());
+				txtRa.setText(a.getRa());
+				txtEmail.setText(a.getEmail());
+				cmbCurso.setSelectedItem(a.getCurso());
 			}
 		}
 	}
-	
-
 }
