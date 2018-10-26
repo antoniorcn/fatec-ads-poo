@@ -1,5 +1,6 @@
 package edu.aula12;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,19 +11,29 @@ import javax.swing.table.TableModel;
 public class AlunoControl implements TableModel {
 	
 	private List<Aluno> alunos = new ArrayList<>();
+	private AlunoDAO alunoDAO;
+	
+	public AlunoControl() { 
+		try {
+			alunoDAO = new AlunoDAOImpl();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}		
+	}
 	
 	public void adicionar(Aluno a) { 
-		alunos.add( a );
-		System.out.println("Aluno cadastrado, a lista tem " + 
-				alunos.size() + " alunos ");
+		try {
+			alunoDAO.adicionar(a);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Aluno pesquisarPorNome(String nome) { 
-		System.out.println("Procurando aluno");
-		for (Aluno a : alunos) { 
-			if (a.getNome().contains(nome)) { 
-				return a;
-			}
+		try {
+			alunos = alunoDAO.pesquisarPorNome(nome);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

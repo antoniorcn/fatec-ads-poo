@@ -99,6 +99,9 @@ public class AlunoBoundary implements ActionListener {
 				txtEmail.setText(a.getEmail());
 				cmbCurso.setSelectedItem(a.getCurso());
 			}
+			table.invalidate();
+			table.revalidate();
+			table.repaint();
 		}
 	}
 }
