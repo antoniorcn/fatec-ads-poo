@@ -1,23 +1,21 @@
-package edu.aula12;
+package edu.aula14;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocadoraBicicletaControl {
+public class LocacaoDAOImpl implements LocacaoDAO {
 	private static String url = 
 			"jdbc:mariadb://localhost:3306/bicicleta?allowMultiQueries=true";
 	private static String user = "root";
 	private static String pass = "";
-	public List<LocadoraBicicleta> locacoes = new ArrayList<>();
 	
-	public LocadoraBicicletaControl() {
+	public LocacaoDAOImpl() { 
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -25,7 +23,8 @@ public class LocadoraBicicletaControl {
 		}
 	}
 	
-	public void adicionar(LocadoraBicicleta l) {
+	@Override
+	public void adicionar(LocacaoBicicleta l) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			Connection con = 
@@ -45,11 +44,11 @@ public class LocadoraBicicletaControl {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}		
-		//locacoes.add(l);
 	}
-	
-	public LocadoraBicicleta pesquisarPorNome(String nomeCliente) {
-		LocadoraBicicleta l = new LocadoraBicicleta();
+
+	@Override
+	public List<LocacaoBicicleta> pesquisarPorNomeCliente(String nomeCliente) {
+		List<LocacaoBicicleta> lista = new ArrayList<>();
 		try {
 			Connection con = 
 					DriverManager.getConnection(url, user, pass);
@@ -58,16 +57,18 @@ public class LocadoraBicicletaControl {
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setString(1, "%" + nomeCliente + "%");
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
+			while (rs.next()) {
+				LocacaoBicicleta l = new LocacaoBicicleta();
 				l.setNomeCliente(rs.getString("nome_cliente"));
 				l.setModeloBike(rs.getString("modelo"));
 				l.setPreco(rs.getFloat("preco"));
 				l.setDataLocacao(rs.getDate("data"));
+				lista.add(l);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return l;
+		return lista;
 	}
 
 }
